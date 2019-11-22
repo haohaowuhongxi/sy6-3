@@ -1,0 +1,153 @@
+package hadoop.ch06.v17034460237;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.util.Bytes;
+
+import java.io.IOException;
+
+public class HBaseDemo63 {
+    public static void main(String[] args)throws Exception{
+
+
+        createTable();
+        insert1();insert2();insert3();insert4();insert5();insert6();insert5();
+        scan();
+        get("Rain","info","birthday");
+
+    }
+    static Configuration conf = HBaseConfiguration.create();
+    private  static void createTable() throws Exception{
+
+        conf.set("hbase.zookeeper.quorum", "node1");
+        conf.set("hbase.rootdir", "hdfs://node1:8020/hbase");
+        conf.set("hbase.cluster.distributed", "true");
+        Connection connect = ConnectionFactory.createConnection(conf);
+        Admin admin = connect.getAdmin();
+        TableName tn = TableName.valueOf("emp17034460237");
+        String[] family=new String[]
+                {"member_id","address","info"};
+        HTableDescriptor desc = new HTableDescriptor(tn);
+        for (int i = 0; i < family.length; i++) {
+            desc.addFamily(new HColumnDescriptor(family[i]));
+
+        }
+        if (admin.tableExists(tn)) {
+            System.out.println("table Exists!");
+            System.exit(0);
+        } else {
+            admin.createTable(desc);
+            System.out.println("create table Success!");
+        }
+
+
+    }
+    private static void insert1() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("info"),
+                Bytes.toBytes("age"),
+                Bytes.toBytes("28"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功1");
+
+    }
+    private static void insert2() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("info"),
+                Bytes.toBytes("birthday"),
+                Bytes.toBytes("1990-05-01"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功2");
+
+    }
+    private static void insert3() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("info"),
+                Bytes.toBytes("industry"),
+                Bytes.toBytes("architect"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功3");
+
+    }
+    private static void insert4() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("address"),
+                Bytes.toBytes("country"),
+                Bytes.toBytes("China"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功4");
+
+    }
+    private static void insert5() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("address"),
+                Bytes.toBytes("city"),
+                Bytes.toBytes("ShenZhen"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功5");
+
+    }
+    private static void insert6() throws Exception {
+        conf.set("hbase.zookeeper.quorum", "node1");
+        HTable table = new HTable(conf, "emp17034460237");
+        Put put = new Put(Bytes.toBytes("Rain"));
+        put.addColumn(Bytes.toBytes("member_id"),
+                Bytes.toBytes("id"),
+                Bytes.toBytes("31"));
+        table.put(put);
+        table.close();
+        System.out.println("插入成功6");
+
+    }
+
+    private static void scan() throws Exception {
+        Configuration conf = new Configuration();
+        conf.set("hbase.zookeeper.quorum", "node1");
+
+        HTable table = new HTable(conf, "emp17034460237");
+
+
+        Scan scanner = new Scan();
+        ResultScanner rs = table.getScanner(scanner);
+        for(Result r:rs){
+            String id = Bytes.toString(r.getValue(Bytes.toBytes("member_id"), Bytes.toBytes("id")));
+            String age = Bytes.toString(r.getValue(Bytes.toBytes("info"), Bytes.toBytes("age")));
+            String birthday = Bytes.toString(r.getValue(Bytes.toBytes("info"), Bytes.toBytes("birthday")));
+            String industry = Bytes.toString(r.getValue(Bytes.toBytes("info"), Bytes.toBytes("industry")));
+            String city = Bytes.toString(r.getValue(Bytes.toBytes("address"), Bytes.toBytes("city")));
+            String country = Bytes.toString(r.getValue(Bytes.toBytes("address"), Bytes.toBytes("country")));
+            System.out.println("查询结果："+"id:"+id+"       " +"age:"+age + "   "+"birthday:"+ birthday+ "   "+"industry:"+industry+ "   "+"city:"+city+ "   "+"country:"+country);
+        }
+        table.close();
+    }
+    private static void get(String Rolkey,String liezu,String column )throws Exception  {
+        Configuration conf = new Configuration();
+        conf.set("hbase.zookeeper.quorum", "node1");
+
+        HTable table = new HTable(conf, "emp17034460237");
+        Get get = new Get(Bytes.toBytes(Rolkey));
+        Result record = table.get(get);
+        String result = Bytes.toString(record.getValue(Bytes.toBytes(liezu), Bytes.toBytes(column)));
+        System.out.println("birthday:");
+        System.out.println(result);
+
+        table.close();
+    }
+
+
+}
